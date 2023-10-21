@@ -18,7 +18,7 @@ public class Fondo : MonoBehaviour
     {
         //transform.position = Vector2.MoveTowards(transform.position, player.position, velMovimiento * Time.deltaTime);
         float targetZ = transform.position.z; // Mantener la posición Z actual
-        Vector3 targetPosition = new Vector3(player.position.x, player.position.y, targetZ);
+        Vector3 targetPosition = new Vector3(player.position.x, 0, targetZ);
         //transform.position = Vector3.MoveTowards(transform.position, targetPosition, velMovimiento * Time.deltaTime);
         transform.position = targetPosition;
     }

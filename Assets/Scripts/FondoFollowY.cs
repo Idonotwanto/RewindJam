@@ -6,11 +6,11 @@ using static UnityEngine.GraphicsBuffer;
 public class FondoFollowY : MonoBehaviour
 {
     [SerializeField] private Transform player;
-    [SerializeField] private int velocidad;
+    [SerializeField] private float velocidad;
 
     void Update()
     {
-        Vector3 seguirplayer = new Vector3(transform.position.x, player.position.y, transform.position.z);
+        Vector3 seguirplayer = new Vector3(transform.position.x, 0.4803f, transform.position.z);
 
         transform.position = seguirplayer;
         //transform.position = Vector3.MoveTowards(transform.position, seguirplayer, velocidad * Time.deltaTime);
