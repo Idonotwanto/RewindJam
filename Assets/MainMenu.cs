@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class MainMenu : MonoBehaviour
 {
+    [SerializeField] GameObject OptionMenu;
 
     public void StartGame()
     {
@@ -19,6 +20,6 @@ public class MainMenu : MonoBehaviour
 
     public void Options()
     {
-        Debug.Log("Options");
+        OptionMenu.SetActive(true);
     }
 }
