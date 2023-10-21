@@ -165,4 +165,6 @@ public class Movimiento : MonoBehaviour
         anim.Play("Parado");
 
     }
+
+
 }
