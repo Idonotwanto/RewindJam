@@ -1,13 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Movimiento : MonoBehaviour
 {
     [SerializeField] private float horizontal;
     [SerializeField] private float horizontalp;
-    //[SerializeField] private Animator anim;
+    [SerializeField] private Animator anim;
     [SerializeField] private float speed = 3;
     private float fuerzaSalto = 5f;
     private Rigidbody2D rb;
@@ -23,16 +20,30 @@ public class Movimiento : MonoBehaviour
     //[SerializeField] private Joystick JS;
 
     [SerializeField] private SFX sfx;
-
+    [SerializeField] SpriteRenderer playerRenderer;
+    public Camera mainCamera;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         previousVelocity = rb.velocity.y;
         //anim = GetComponent<Animator>();
+        _obtenCamara();
     }
+
+    private void _obtenCamara()
+    {
+        // Ensure the main camera is set
+        if (mainCamera == null)
+        {
+            mainCamera = Camera.main;
+        }
+
+    }
+
     private void FixedUpdate()
     {
+        if (IsPlayerTouchingLeft()) return;
         rb.velocity = new Vector2(horizontal, rb.velocity.y);
     }
 
@@ -52,12 +63,12 @@ public class Movimiento : MonoBehaviour
         }//codigo para desbugearse
 
 
-
-        if (rb.velocity.y < 0)
+        if (rb.velocity.y <= 0)
         {
             //isFalling = true;
             //anim.SetBool("Cayendo", true);
             animJump = false;
+
         }
         else
         {
@@ -67,11 +78,13 @@ public class Movimiento : MonoBehaviour
 
 
 
-                horizontal = Input.GetAxisRaw("Horizontal");
+        horizontal = Input.GetAxisRaw("Horizontal");
+        if (IsPlayerTouchingLeft() && horizontal < 0.0f) return; //evitar que el personaje pase de la camara a la izquierda
+
         //anim.SetBool("Jumping", false);//Codigo animacion salto
         //anim.SetBool("Run", horizontal != 0.0f);//codigo animacion correr
 
-        //horizontal = Input.GetAxisRaw("Horizontal");
+
         transform.Translate(horizontal * speed * Time.deltaTime, 0, 0);//Codigo para moverse
 
         if (horizontal < 0.0f)
@@ -89,23 +102,38 @@ public class Movimiento : MonoBehaviour
             WalkingOff();
         }
 
-        if (animJump)
-        {
-            //anim.SetBool("Jumping", true);
-        }
         if (Input.GetKeyDown(KeyCode.Space) && Mathf.Abs(rb.velocity.y) < 0.001f)
         {
             rb.AddForce(new Vector2(0f, fuerzaSalto), ForceMode2D.Impulse);
             //anim.SetBool("Jumping", true);
             sfx.PlayJump();
+            animJump = true;
+
         }//Animacion de salto
+
+        _checkAnimation();
     }
+
+    private bool IsPlayerTouchingLeft()
+    {
+        // Get the boundaries of the player's sprite in screen space.
+        Vector3 spriteMin = mainCamera.WorldToScreenPoint(playerRenderer.bounds.min);
+        Vector3 spriteMax = mainCamera.WorldToScreenPoint(playerRenderer.bounds.max);
+
+        // Get the camera's left boundary in screen space.
+        float cameraLeft = 0.0f;
+
+        // Check if the player's sprite is touching the left boundary of the camera.
+        return spriteMin.x <= cameraLeft && spriteMax.x >= cameraLeft;
+    }
+
     private void WalkingOn()
     {
         if (walking == false)
         {
             sfx.PlayWalk();
             walking = true;
+            if (animJump) return;
         }
     }
     private void WalkingOff()
@@ -114,6 +142,7 @@ public class Movimiento : MonoBehaviour
         {
             sfx.StopWalk();
             walking = false;
+
         }
     }
     public void BotonJump()
@@ -123,6 +152,17 @@ public class Movimiento : MonoBehaviour
             rb.AddForce(new Vector2(0f, fuerzaSalto), ForceMode2D.Impulse);
             animJump = true;
             sfx.PlayJump();
+
         }
+    }
+
+
+    void _checkAnimation()
+    {
+        if (animJump) { anim.Play("Jump"); return; }
+        if (walking) { anim.Play("Caminando"); return; }
+
+        anim.Play("Parado");
+
     }
 }
