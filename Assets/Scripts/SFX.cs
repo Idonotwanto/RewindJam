@@ -27,7 +27,7 @@ public class SFX : MonoBehaviour
     /// </summary>
     public void CambioVolumen(float volumen) 
     {
-        jump.volume=volumen;
+        jump.volume = volumen;
         walk.volume = volumen;
     }
 }

@@ -89,15 +89,21 @@ public class Movimiento : MonoBehaviour
 
         if (horizontal < 0.0f)
         {
-            WalkingOn();
+            if (Mathf.Abs(rb.velocity.y) < 0.001f)
+            {
+                WalkingOn();
+            }
             transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
         }
         else if (horizontal > 0.0f)
         {
-            WalkingOn();
+            if(Mathf.Abs(rb.velocity.y) < 0.001f)
+            {
+                WalkingOn();
+            }
             transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
         }//Codigo que corrige la orientacion del player
-        if (horizontal == 0)
+        if (horizontal == 0 || Mathf.Abs(rb.velocity.y) > 0.001f)
         {
             WalkingOff();
         }
