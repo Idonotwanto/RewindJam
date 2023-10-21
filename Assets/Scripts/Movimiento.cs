@@ -17,7 +17,6 @@ public class Movimiento : MonoBehaviour
     //private bool isFalling;
     private bool animJump = false;
 
-    //[SerializeField] private Joystick JS;
 
     [SerializeField] private SFX sfx;
     [SerializeField] SpriteRenderer playerRenderer;
@@ -165,8 +164,16 @@ public class Movimiento : MonoBehaviour
 
     void _checkAnimation()
     {
-        if (animJump) { anim.Play("Jump"); return; }
-        if (walking) { anim.Play("Caminando"); return; }
+        if (animJump)
+        {
+            anim.Play("Jump");
+            return;
+        }
+        if (walking)
+        {
+            anim.Play("Caminando");
+            return;
+        }
 
         anim.Play("Parado");
 
