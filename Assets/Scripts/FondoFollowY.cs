@@ -12,7 +12,7 @@ public class FondoFollowY : MonoBehaviour
     {
         Vector3 seguirplayer = new Vector3(transform.position.x, 0.4803f, transform.position.z);
 
-        transform.position = seguirplayer;
-        //transform.position = Vector3.MoveTowards(transform.position, seguirplayer, velocidad * Time.deltaTime);
+        //transform.position = seguirplayer;
+        transform.position = Vector3.MoveTowards(transform.position, seguirplayer, velocidad * Time.deltaTime);
     }
 }
