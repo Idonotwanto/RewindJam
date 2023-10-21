@@ -5,8 +5,8 @@ public class Movimiento : MonoBehaviour
     [SerializeField] private float horizontal;
     [SerializeField] private float horizontalp;
     [SerializeField] private Animator anim;
-    [SerializeField] private float speed = 3;
-    private float fuerzaSalto = 5f;
+    [SerializeField] private float speed = 7.5f;
+    [SerializeField] private float fuerzaSalto = 10f;
     private Rigidbody2D rb;
     private float previousVelocity;
     private bool Jumping;
