@@ -2,14 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
     [SerializeField] GameObject OptionMenu;
-
     public void StartGame()
     {
-        Debug.Log("StartGame");
+        SceneManager.LoadScene(1);
     }
 
     public void QuitGame()
@@ -21,5 +21,9 @@ public class MainMenu : MonoBehaviour
     public void Options()
     {
         OptionMenu.SetActive(true);
+    }
+    private void Start()
+    {
+        OptionMenu.SetActive(false);
     }
 }
