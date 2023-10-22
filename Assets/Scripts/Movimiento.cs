@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class Movimiento : MonoBehaviour
 {
     [SerializeField] private float horizontal;
@@ -7,13 +6,12 @@ public class Movimiento : MonoBehaviour
     [SerializeField] private Animator anim;
     [SerializeField] private float speed = 7.5f;
     [SerializeField] private float fuerzaSalto = 10f;
+    [SerializeField] private float fuerzaSalto2 = 10f;
+    [SerializeField] private float variableDecaida = 0.3f;
     private Rigidbody2D rb;
     private float previousVelocity;
     private bool Jumping;
     private bool walking;
-    private bool Bug = false;
-    private bool BugT = false;
-    private bool BugPI = false;
     //private bool isFalling;
     private bool animJump = false;
 
@@ -22,12 +20,22 @@ public class Movimiento : MonoBehaviour
     [SerializeField] SpriteRenderer playerRenderer;
     public Camera mainCamera;
 
+
+
+
+    public float jumpTime = 0.5f;  // Tiempo máximo de salto
+
+    private bool isJumping = false;
+    private float jumpTimeCounter;
+    private bool running;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         previousVelocity = rb.velocity.y;
         //anim = GetComponent<Animator>();
         _obtenCamara();
+        jumpTimeCounter = jumpTime;
     }
 
     private void _obtenCamara()
@@ -48,20 +56,6 @@ public class Movimiento : MonoBehaviour
 
     void Update()
     {
-        if (Bug)
-        {
-            transform.Translate(Vector3.up * .15f);
-        }
-        if (BugT)
-        {
-            transform.Translate(Vector3.down * .15f);
-        }
-        if (BugPI)
-        {
-            transform.Translate(Vector3.right * .15f);
-        }//codigo para desbugearse
-
-
         if (rb.velocity.y <= 0)
         {
             //isFalling = true;
@@ -107,14 +101,55 @@ public class Movimiento : MonoBehaviour
             WalkingOff();
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && Mathf.Abs(rb.velocity.y) < 0.001f)
+        if (Input.GetKeyDown(KeyCode.Z) && Mathf.Abs(rb.velocity.y) < 0.001f && !isJumping)
         {
-            rb.AddForce(new Vector2(0f, fuerzaSalto), ForceMode2D.Impulse);
+            //rb.AddForce(new Vector2(0f, fuerzaSalto), ForceMode2D.Impulse);
             //anim.SetBool("Jumping", true);
+            rb.velocity = new Vector2(rb.velocity.x, fuerzaSalto);
+            isJumping = true;
+            jumpTimeCounter = jumpTime;
+
             sfx.PlayJump();
             animJump = true;
-
         }//Animacion de salto
+
+        if (Input.GetKey(KeyCode.Z) && isJumping)
+        {
+            
+            
+                //fuerzaSalto = fuerzaSalto - variableDecaida;
+            
+            if (jumpTimeCounter > 0)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, fuerzaSalto);
+                jumpTimeCounter -= Time.deltaTime;
+            }
+            else
+            {
+                isJumping = false;
+            }
+        }
+        if (Input.GetKeyUp(KeyCode.Z))
+        {
+            fuerzaSalto = fuerzaSalto2;
+            isJumping = false;
+        }
+        if(Input.GetKeyDown(KeyCode.X))
+        {
+            running = true;
+        }
+        if (Input.GetKeyUp(KeyCode.X))
+        {
+            running = false;
+        }
+        if (running)
+        {
+            speed = 10;
+        }
+        else
+        {
+            speed = 5;
+        }
 
         _checkAnimation();
     }
