@@ -2,12 +2,12 @@ using UnityEngine;
 public class Movimiento : MonoBehaviour
 {
     [SerializeField] private float horizontal;
+    private float horizontalRaw;
     [SerializeField] private float horizontalp;
     [SerializeField] private Animator anim;
     [SerializeField] private float speed = 7.5f;
     [SerializeField] private float fuerzaSalto = 10f;
     [SerializeField] private float fuerzaSalto2 = 10f;
-    [SerializeField] private float variableDecaida = 0.3f;
     private Rigidbody2D rb;
     private float previousVelocity;
     private bool Jumping;
@@ -28,6 +28,10 @@ public class Movimiento : MonoBehaviour
     private bool isJumping = false;
     private float jumpTimeCounter;
     private bool running;
+    private float velGradual;
+    private float tazaDisminucion;
+    private float horizontalInv;
+    private int lastDir;
 
     void Start()
     {
@@ -56,6 +60,10 @@ public class Movimiento : MonoBehaviour
 
     void Update()
     {
+        if (IsPlayerTouchingLeft() && horizontal < 0.0f) return; //evitar que el personaje pase de la camara a la izquierda
+
+        //anim.SetBool("Jumping", false);//Codigo animacion salto
+        //anim.SetBool("Run", horizontal != 0.0f);//codigo animacion correr
         if (rb.velocity.y <= 0)
         {
             //isFalling = true;
@@ -71,14 +79,34 @@ public class Movimiento : MonoBehaviour
 
 
 
-        horizontal = Input.GetAxisRaw("Horizontal");
-        if (IsPlayerTouchingLeft() && horizontal < 0.0f) return; //evitar que el personaje pase de la camara a la izquierda
+        horizontal = Input.GetAxis("Horizontal");
+        horizontalRaw = Input.GetAxisRaw("Horizontal");
+        if (horizontalRaw > 0)
+        {
+            tazaDisminucion = horizontalRaw - .9f;
+        }
+        else if (horizontalRaw < 0)
+        {
+            tazaDisminucion = horizontalRaw + .9f;
+        }
 
-        //anim.SetBool("Jumping", false);//Codigo animacion salto
-        //anim.SetBool("Run", horizontal != 0.0f);//codigo animacion correr
+        velGradual = horizontalRaw;
+        if (velGradual < 0)
+        {
+            velGradual = velGradual * -1;
+        }
+
+        if (horizontalRaw == 0)
+        {
+            velGradual = Mathf.Lerp(velGradual, 0, 0.01f * Time.deltaTime);
+        }
 
 
-        transform.Translate(horizontal * speed * Time.deltaTime, 0, 0);//Codigo para moverse
+        Debug.Log(velGradual);
+
+        transform.Translate(horizontal * speed * Time.deltaTime * velGradual, 0, 0);//Codigo para moverse
+
+        
 
         if (horizontal < 0.0f)
         {
